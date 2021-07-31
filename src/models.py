@@ -1,19 +1,46 @@
+import os
+import sys
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
+Base = declarative_base()
+
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    username = Column(String(16), nullable=False)
+    password = Column(String(16), nullable=False)
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+class Planet(db.Model):
+    __tablename__ = 'planet'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    climate = Column(String(50), nullable=False)
+    diameter = Column(String(50), nullable=False)
+    gravity = Column(String(50), nullable=False)
+    population = Column(String(50), nullable=False)
+    terrain = Column(String(50), nullable=False)
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "email": self.email,
-            # do not serialize the password, its a security breach
-        }
+class Character(db.Model):
+    __tablename__ = 'character'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    birth_year = Column(String(50), nullable=False)
+    gender = Column(String(50), nullable=False)
+    planet_id = Column(Integer, ForeignKey('planet.id'))
+
+class Favorite(db.Model):
+    __tablename__ = 'favorite'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    planet_id = Column(Integer, ForeignKey('planet.id'))
+    character_id = Column(Integer, ForeignKey('character.id'))
+
+
